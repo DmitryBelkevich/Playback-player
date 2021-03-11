@@ -15,10 +15,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.hard.playback_player.R;
+import com.hard.playback_player.activities.SongActivity;
 import com.hard.playback_player.app.PlaybackPlayerApplication;
 import com.hard.playback_player.models.Score;
 import com.hard.playback_player.models.Song;
 import com.hard.playback_player.settings.Constants;
+import com.hard.playback_player.utils.Screen;
 import com.hard.playback_player.utils.managers.ScoresManager;
 
 import java.io.IOException;
@@ -34,6 +36,7 @@ public class ScoreFragment extends Fragment {
     private Song song;
 
     private ScoresManager scoresManager;
+    private Screen screen;
 
     private View view;
 
@@ -70,6 +73,9 @@ public class ScoreFragment extends Fragment {
 
         PlaybackPlayerApplication application = (PlaybackPlayerApplication) getActivity().getApplication();
         scoresManager = application.getScoresManager();
+
+        SongActivity songActivity = (SongActivity) getActivity();
+        screen = songActivity.getScreen();
     }
 
     @Override
@@ -162,28 +168,14 @@ public class ScoreFragment extends Fragment {
 
     private void updateScreen(View view) {
         // current score
-        TextView score_screen = view.findViewById(R.id.score_screen);
-        score_screen.setEnabled(true);
-        score_screen.setText(scoresManager.getCurrentScore().getTitle());
-
-        TextView score_textView = getActivity().findViewById(R.id.score_textView);
-        int LIMIT = 30;
-        String title = scoresManager.getCurrentScore().getTitle().length() > LIMIT ? scoresManager.getCurrentScore().getTitle().substring(0, LIMIT) : scoresManager.getCurrentScore().getTitle();
-        score_textView.setText(title);
+        Score currentScore = scoresManager.getCurrentScore();
+        screen.setScore(currentScore);
 
         // score orientation
-        TextView orientation_textView = view.findViewById(R.id.orientation_textView);
-        orientation_textView.setEnabled(true);
         if (scoresManager.isVertical())
-            orientation_textView.setText("^v");
+            screen.setVerticalOrientation();
         else
-            orientation_textView.setText("<>");
-
-        TextView orientation_textView2 = getActivity().findViewById(R.id.orientation_textView2);
-        if (scoresManager.isVertical())
-            orientation_textView2.setText("^v");
-        else
-            orientation_textView2.setText("<>");
+            screen.setHorizontalOrientation();
     }
 
     /**

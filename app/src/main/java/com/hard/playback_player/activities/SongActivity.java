@@ -26,10 +26,12 @@ import com.hard.playback_player.activities.fragments.song.ScoreFragment;
 import com.hard.playback_player.activities.fragments.song.TextFragment;
 import com.hard.playback_player.app.PlaybackPlayerApplication;
 import com.hard.playback_player.models.Metronome;
+import com.hard.playback_player.models.Score;
 import com.hard.playback_player.models.Settings;
 import com.hard.playback_player.models.Song;
 import com.hard.playback_player.settings.Constants;
 import com.hard.playback_player.utils.Player;
+import com.hard.playback_player.utils.Screen;
 import com.hard.playback_player.utils.managers.MetronomesManager;
 import com.hard.playback_player.utils.managers.PlaybacksManager;
 import com.hard.playback_player.utils.managers.ScoresManager;
@@ -43,6 +45,11 @@ public class SongActivity extends AppCompatActivity {
     private MetronomesManager metronomesManager;
 
     private Player player;
+    private Screen screen;
+
+    public Screen getScreen() {
+        return screen;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +64,13 @@ public class SongActivity extends AppCompatActivity {
 
         player = application.getPlayer();
         player.setActivity(this);
+
+        // screen >
+        screen = new Screen();
+        screen.setActivity(this);
+        Score currentScore = scoresManager.getCurrentScore();
+        screen.setScore(currentScore);
+        // screen <
 
         // init settings >
         if (Settings.isKeepScreenOn())
@@ -177,6 +191,12 @@ public class SongActivity extends AppCompatActivity {
         // Menu <
 
         setResult(1, intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        screen.clearScreen();
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
